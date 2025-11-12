@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import { useAppStore } from '../store';
 // removed unused camera imports here; camera screen handles capture
-import { searchAndStore } from '../api/gemini';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { searchIcInDb } from '../api/db';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
+import { useEffect } from 'react';
 
 export const SearchScreen: React.FC = () => {
   const { theme } = useTheme();
   const store = useAppStore();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Search'>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'Search'>>();
   const [icInput, setIcInput] = useState('');
-  const insets = useSafeAreaInsets();
+  
+  useEffect(() => {
+    const prefill = route.params?.icFromCamera;
+    if (prefill && prefill.trim() && prefill.trim() !== icInput) {
+      setIcInput(prefill.trim());
+    }
+  }, [route.params?.icFromCamera]);
+
 
   const handlePick = async () => {
     // Redirect to dedicated camera screen for more reliable capture and permission handling
@@ -31,11 +39,17 @@ export const SearchScreen: React.FC = () => {
       return;
     }
     try {
-      const res = await searchAndStore(normalized);
-      navigation.navigate('Results', { ic: normalized, parsed: res.parsed || {}, text: res.text });
+      store.setLoading(true);
+      store.setError(undefined);
+      const text = await searchIcInDb(normalized);
+      const result = { ic: normalized, text };
+      store.addResult(result);
+      navigation.navigate('Results', { ic: normalized, parsed: {}, text });
     } catch (e) {
-      // error already set in store
+      const msg = e instanceof Error ? e.message : 'Search failed';
+      store.setError(msg);
     }
+    finally { store.setLoading(false); }
   };
 
   const handleDelete = (ic: string) => {

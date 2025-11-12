@@ -4,16 +4,10 @@ require('dotenv').config();
 
 module.exports = ({ config }) => ({
   ...config,
+  plugins: [...(config.plugins || []), 'expo-sqlite'],
   extra: {
     ...config.extra,
-    geminiApiKey: process.env.GEMINI_API_KEY ?? config.extra?.geminiApiKey ?? '',
-    geminiModel: process.env.GEMINI_MODEL ?? config.extra?.geminiModel ?? 'gemini-2.5-flash',
-    // Support multiple keys, first one is the default
-    geminiApiKeys: [
-      process.env.GEMINI_API_KEY,
-      process.env.GEMINI_API_KEY_1,
-      process.env.GEMINI_API_KEY_2
-    ].filter(Boolean),
+    // Gemini removed
     eas: config.extra?.eas,
   },
 });

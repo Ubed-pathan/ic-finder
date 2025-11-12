@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { CameraView, useCameraPermissions, CameraCapturedPicture } from 'expo-camera';
-import { extractIcFromImage } from '../api/ocr';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
@@ -23,12 +22,8 @@ const CameraScreen: React.FC = () => {
   const photo: CameraCapturedPicture = await (camRef.current as unknown as { takePictureAsync: (opts: { base64: boolean; quality: number; skipProcessing: boolean }) => Promise<CameraCapturedPicture> }).takePictureAsync({ base64: true, quality: 0.6, skipProcessing: true });
       const base64 = photo.base64;
       const uri = photo.uri;
-      let code: string | null = null;
-      if (base64) {
-        code = await extractIcFromImage(base64);
-      }
-      // Navigate back to Search with serializable params
-  navigation.navigate('Search', { icFromCamera: code || '', lastImageUri: uri || undefined });
+      // OCR removed; navigate back without auto-filled code
+      navigation.navigate('Search', { icFromCamera: '', lastImageUri: uri || undefined });
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Failed to capture';
       setError(msg);

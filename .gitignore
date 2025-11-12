@@ -11,3 +11,8 @@ web-build/
 .env.local
 .env.example
 .env.*.local
+
+# Android signing keys (do NOT commit secrets)
+*.keystore
+*.jks
+my-release-key.keystore

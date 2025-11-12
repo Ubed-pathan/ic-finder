@@ -20,7 +20,6 @@ export type ParsedIcSpec = {
   releaseYear?: string;
 };
 
-export type GeminiRawResponse = unknown;
 
 export type RootStackParamList = {
   Search: { icFromCamera?: string; lastImageUri?: string } | undefined;

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { GeminiRawResponse } from '../types';
 
 export type SearchResult = {
   ic: string;
@@ -25,7 +24,6 @@ export type SearchResult = {
   packageType?: string;
   status?: string;
   specs?: Record<string, string>;
-  rawResponse?: GeminiRawResponse;
   text?: string; // raw text response for reuse
 };
 
@@ -38,15 +36,12 @@ export type StoreState = {
   clearHistory: () => void;
   setLoading: (v: boolean) => void;
   setError: (e?: string) => void;
-  selectedApiKeyIdx: number;
-  setSelectedApiKeyIdx: (i: number) => void;
 };
 
 export const useAppStore = create<StoreState>((set) => ({
   history: [],
   loading: false,
   error: undefined,
-  selectedApiKeyIdx: 0,
   addResult: (r: SearchResult) => set((s: StoreState) => {
     // de-duplicate by IC, put newest on top
     const filtered = s.history.filter(h => h.ic.toLowerCase() !== r.ic.toLowerCase());
@@ -55,6 +50,5 @@ export const useAppStore = create<StoreState>((set) => ({
   removeResult: (ic: string) => set((s: StoreState) => ({ history: s.history.filter(h => h.ic.toLowerCase() !== ic.toLowerCase()) })),
   clearHistory: () => set(() => ({ history: [] })),
   setLoading: (v: boolean) => set(() => ({ loading: v })),
-  setError: (e?: string) => set(() => ({ error: e })),
-  setSelectedApiKeyIdx: (i: number) => set(() => ({ selectedApiKeyIdx: i }))
+  setError: (e?: string) => set(() => ({ error: e }))
 }));

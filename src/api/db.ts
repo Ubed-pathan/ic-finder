@@ -1,9 +1,8 @@
+// Using the async API from expo-sqlite for promise-based queries
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import { Platform } from 'react-native';
-// Import the bundled database asset (declared in types/assets.d.ts)
-import dbAsset from '../../mobile_ic_database_expanded.db';
 
 const DB_NAME = 'mobile_ic_database_expanded.db';
 const SQLITE_DIR = `${FileSystem.documentDirectory}SQLite`;
@@ -17,10 +16,11 @@ async function copyBundledDbIfNeeded(): Promise<void> {
   try {
     await FileSystem.makeDirectoryAsync(SQLITE_DIR, { intermediates: true });
   } catch (e) {
-    // noop - directory may already exist
+    // directory may already exist
   }
-  // Use Metro-bundled asset imported as a module (see types/assets.d.ts)
-  const asset = Asset.fromModule(dbAsset as unknown as number);
+  // Use Metro-bundled asset. The .db is at project root; require path is relative to this file
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const asset = Asset.fromModule(require('../../mobile_ic_database_expanded.db'));
   await asset.downloadAsync();
   if (!asset.localUri) throw new Error('Failed to load bundled database asset');
   await FileSystem.copyAsync({ from: asset.localUri, to: DB_PATH });
@@ -62,9 +62,8 @@ async function getTables(db: SQLite.SQLiteDatabase): Promise<string[]> {
 }
 
 async function getColumns(db: SQLite.SQLiteDatabase, table: string): Promise<{ name: string; type: string }[]> {
-  type PragmaInfo = { name: string; type?: string };
-  const rows = await db.getAllAsync<PragmaInfo>(`PRAGMA table_info(${table})`);
-  return rows.map((r: PragmaInfo) => ({ name: r.name, type: r.type || '' }));
+  const rows = await db.getAllAsync<{ name: string; type?: string }>(`PRAGMA table_info(${table})`);
+  return rows.map((r: { name: string; type?: string }) => ({ name: r.name, type: r.type || '' }));
 }
 
 function buildWhereEq(cols: string[]): string {
@@ -101,7 +100,7 @@ export async function searchIcInDb(icNumber: string): Promise<string> {
       const row = await db.getFirstAsync<Record<string, unknown>>(`SELECT * FROM ${table} WHERE ${where} LIMIT 1`, Array(likely.length).fill(term));
       if (row) return formatRow(table, row);
     } catch (e) {
-      // noop - skip table errors
+      // ignore table errors and continue
     }
   }
 
@@ -115,7 +114,7 @@ export async function searchIcInDb(icNumber: string): Promise<string> {
       const row = await db.getFirstAsync<Record<string, unknown>>(`SELECT * FROM ${table} WHERE ${where} LIMIT 1`, Array(likely.length).fill(`%${term}%`));
       if (row) return formatRow(table, row);
     } catch (e) {
-      // noop
+      // ignore and continue
     }
   }
 
@@ -129,7 +128,7 @@ export async function searchIcInDb(icNumber: string): Promise<string> {
       const row = await db.getFirstAsync<Record<string, unknown>>(`SELECT * FROM ${table} WHERE ${where} LIMIT 1`, Array(textish.length).fill(`%${term}%`));
       if (row) return formatRow(table, row);
     } catch (e) {
-      // noop
+      // ignore and continue
     }
   }
 

@@ -8,8 +8,7 @@ import { RootStackParamList } from '../types';
 export const ResultsScreen: React.FC = () => {
   const { theme } = useTheme();
   const route = useRoute<RouteProp<RootStackParamList, 'Results'>>();
-  const { ic, parsed, text } = route.params;
-  const parsedObj = (parsed ?? {}) as Record<string, unknown>;
+  const { ic, text } = route.params;
   const tryJson = useMemo(() => {
     try {
       return JSON.parse(text);
@@ -22,13 +21,13 @@ export const ResultsScreen: React.FC = () => {
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: 16 }}>
       <View style={[styles.headerCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>        
         <Text style={[styles.icTitle, { color: theme.colors.text }]}>{ic}</Text>
-        <Text style={{ color: theme.colors.textSecondary, marginTop: 4 }}>AI Response</Text>
+  <Text style={{ color: theme.colors.textSecondary, marginTop: 4 }}>Database Result</Text>
       </View>
       {tryJson ? (
         <KeyValueView data={tryJson} />
       ) : (
         <View style={[styles.rawCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>          
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Raw Text</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Details</Text>
           <Text selectable style={{ color: theme.colors.textSecondary }}>{text}</Text>
         </View>
       )}

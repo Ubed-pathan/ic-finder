@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SearchScreen from '../screens/SearchScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import CameraScreen from '../screens/CameraScreen';
-import KeySelector from '../components/KeySelector';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../types';
@@ -20,7 +19,7 @@ export const AppNavigator: React.FC = () => {
         screenOptions={{
           headerShown: true,
           headerTitle: '',
-          headerRight: () => <KeySelector />,
+          // No headerRight; Gemini key selector removed
           contentStyle: { paddingTop: Math.max(insets.top - 4, 0) }
         }}
       >

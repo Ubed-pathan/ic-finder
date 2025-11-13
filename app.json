@@ -4,6 +4,7 @@
     "slug": "ic-finder",
     "scheme": "icfinder",
     "version": "0.1.0",
+    "icon": "./assets/images/icon.png",
     "orientation": "portrait",
     "newArchEnabled": true,
     "userInterfaceStyle": "automatic",

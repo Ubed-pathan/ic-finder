@@ -12,18 +12,24 @@
       "supportsTablet": true
     },
     "android": {
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "CAMERA"
+      ],
+      "package": "com.ubed.icfinder",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      ["expo-camera"]
+      [
+        "expo-camera"
+      ]
     ],
     "extra": {
       "eas": {
-        "projectId": "00000000-0000-0000-0000-000000000000"
+        "projectId": "56acfb2c-a92f-4895-8ea9-a7ba6bd69b0d"
       }
     }
   }

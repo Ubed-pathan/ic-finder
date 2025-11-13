@@ -5,13 +5,12 @@
   "build": {
     "preview-apk": {
       "android": {
-        "distribution": "internal",
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "apk"
       }
     },
     "production": {
       "android": {
-        "distribution": "store"
+        "buildType": "app-bundle"
       }
     }
   },
